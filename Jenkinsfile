@@ -1,38 +1,18 @@
-pipeline {
-    options {
-    }
-    agent any
-    stages {
-        stage('Clean Workspace') {
-            steps {
-                deleteDir()
-                echo 'Cleeanup done'
-				}
-            }
-        }
-	
-        stage('CheckOut the code') {
-            steps {
-                checkout scm
-                script {
-                    gitInfo = getGitInfo()
-                    echo "the changed owner is ${gitInfo.git_author}"
-                }
-            }
-        }
-        stage('Build') {
-            steps {
-                echo "Building the job"
-                script {
-                    echo " Building done successfully"
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                script {
-                    echo "Testing done successfully" 
-                }
-            }
-        }
-    }
+node {
+
+   stage ('Clean') {
+	   deleteDir()
+   }
+
+   stage ('Checkout') {
+	   git branch: 'master', url: 'https://github.com/Sun-Raise/Jenkins_pipeline.git'
+	   sh 'whoami'
+	   sh 'ls -ltr /var/lib/jenkins/workspace/pipeline_test'
+   }
+						
+   stage ('Build') {
+       sh 'chmod 755 /var/lib/jenkins/workspace/pipeline_test/deploy.sh'
+       sh 'sh /var/lib/jenkins/workspace/pipeline_test/deploy.sh'
+	   echo "Build Completed"
+   }
+}
